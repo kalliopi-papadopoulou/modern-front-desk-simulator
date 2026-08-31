@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>The Modern Front Desk Simulator</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --card-bg: rgba(17, 24, 39, 0.94);
+      --card-border: rgba(148, 163, 184, 0.18);
+      --accent-blue: #38bdf8;
+      --accent-cyan: #22d3ee;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #f87171;
+      --accent-purple: #c084fc;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg) 80%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .mobile-app-shell {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 24px;
+    }
+
+    header {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      backdrop-filter: blur(16px);
+    }
+
+    .app-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .tagline-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.78rem;
+    }
+
+    .tagline-1 { color: var(--accent-cyan); font-weight: 600; line-height: 1.35; }
+    .tagline-2 { color: var(--text-muted); font-size: 0.74rem; }
+
+    .tag-cloud {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tag-eq { background: rgba(192, 132, 252, 0.15); color: var(--accent-purple); border: 1px solid rgba(192, 132, 252, 0.3); }
+    .tag-bio { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .tag-psy { background: rgba(251, 191, 36, 0.15); color: var(--accent-amber); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .tag-risk { background: rgba(248, 113, 113, 0.15); color: var(--accent-rose); border: 1px solid rgba(248, 113, 113, 0.3); }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat-chip {
+      background: rgba(10, 15, 30, 0.75);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-chip span:first-child {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .stat-chip span:last-child {
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      backdrop-filter: blur(14px);
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    select, textarea {
+      background: rgba(10, 15, 30, 0.85);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: #fff;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      outline: none;
+      width: 100%;
+    }
+
+    select:focus, textarea:focus {
+      border-color: var(--accent-blue);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 55px;
+      line-height: 1.35;
+    }
+
+    .btn-main {
+      background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+      color: #070b14;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+    }
+
+    .btn-main:active { transform: scale(0.98); }
+
+    .bio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(10, 15, 30, 0.6);
+      border: 1px dashed rgba(56, 189, 248, 0.35);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .bio-node {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .bio-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
+    .bio-value { font-size: 0.78rem; font-weight: 700; color: var(--accent-blue); }
+
+    .output-card {
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border: 1px solid var(--card-border);
+    }
+
+    .output-card.unlearn { background: rgba(248, 113, 113, 0.07); border-left: 4px solid var(--accent-rose); }
+    .output-card.rethink { background: rgba(251, 191, 36, 0.07); border-left: 4px solid var(--accent-amber); }
+    .output-card.relearn { background: rgba(52, 211, 153, 0.07); border-left: 4px solid var(--accent-emerald); }
+
+    .step-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .unlearn .step-tag { color: var(--accent-rose); }
+    .rethink .step-tag { color: var(--accent-amber); }
+    .relearn .step-tag { color: var(--accent-emerald); }
+
+    .dialogue-text { font-size: 0.88rem; line-height: 1.45; color: #fff; }
+    .psych-text { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+    .dispatch-feed {
+      background: rgba(10, 15, 30, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 0.72rem;
+      color: var(--accent-cyan);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .btn-copy {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-copy:active { color: #fff; border-color: var(--accent-blue); }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding-top: 14px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="mobile-app-shell">
+  <!-- Header -->
+  <header>
+    <div class="app-title">The Modern Front Desk Simulator</div>
+    <div class="tagline-block">
+      <div class="tagline-1">Convert transactional front office scripts into high emotional (EQ) dynamic dialogues</div>
+      <div class="tagline-2">Continuous upskilling, dynamic validation and biometric behavioral analytics</div>
+    </div>
+    <div class="tag-cloud">
+      <span class="tag tag-eq">EQ Simulator</span>
+      <span class="tag tag-psy">Guest Psychology</span>
+      <span class="tag tag-bio">Biometrics Active</span>
+      <span class="tag tag-risk">Operational Rigor</span>
+    </div>
+  </header>
+
+  <!-- Performance Dashboard -->
+  <div class="dashboard-grid">
+    <div class="stat-chip">
+      <span>Agent EQ Execution</span>
+      <span id="scoreEq" style="color: var(--accent-emerald);">98% (Flawless)</span>
+    </div>
+    <div class="stat-chip">
+      <span>Risk &amp; Allergen Protection</span>
+      <span id="scoreRisk" style="color: var(--accent-cyan);">Dual-Layer Active</span>
+    </div>
+    <div class="stat-chip">
+      <span>Pricing Transparency Score</span>
+      <span id="scorePrice" style="color: var(--accent-amber);">100% Upfront</span>
+    </div>
+    <div class="stat-chip">
+      <span>Cross-Sync Dispatch Rate</span>
+      <span id="scoreSync" style="color: var(--accent-purple);">Real-Time (Cloud)</span>
+    </div>
+  </div>
+
+  <!-- Scenario Controller -->
+  <div class="card">
+    <div class="card-title">
+      <span>⚙️ Front Desk Scenario Simulator</span>
+    </div>
+
+    <div class="form-group">
+      <label>Guest Status / Tier</label>
+      <select id="guestTier" onchange="runEngine()">
+        <option value="returning_vip">Returning VIP (Evolving Habits)</option>
+        <option value="late_fatigue">Late Night / Long-Haul Arrival (High Fatigue)</option>
+        <option value="corporate_velocity">Corporate (High Velocity, Zero Friction)</option>
+        <option value="luxury_leisure">Luxury Leisure / Celebration</option>
+        <option value="first_time">New / First-Time Luxury Traveler</option>
+        <option value="top_tier_vip">Top-Tier VIP</option>
+        <option value="family_pets">Family with Children &amp; Pets</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Standard Operational Scenario</label>
+      <select id="scenarioSelect" onchange="runEngine()">
+        <option value="early_arrival_not_ready">1. Early Arrival with Room Not Ready (Shadow Check-In)</option>
+        <option value="transaction_payment_card">2. Transactional Payment / Card Request</option>
+        <option value="billing_authorization">3. Authorization of Billing (Corporate / Direct Bill)</option>
+        <option value="allergy_dietary">4. The Allergy &amp; Dietary Preference Case</option>
+        <option value="vip_pet">5. The VIP Pet Arrival Case</option>
+        <option value="amenity_customization">6. The Amenity Customization Case</option>
+        <option value="overbooking_upgrade">7. The Overbooking &amp; Upgrade Case</option>
+        <option value="invalid_card">8. The Invalid / Declined Card Case</option>
+        <option value="complex_directions">9. The Complex Room Direction Case</option>
+        <option value="parking_valet">10. The Parking &amp; Valet Transparency Case</option>
+        <option value="ancillary_upsell">11. The Ancillary Service Upsell Case</option>
+        <option value="angry_guest">12. The Angry, Loud, &amp; High-Status Guest Case</option>
+        <option value="multigen_family">13. The Multi-Generational Family Arrival Case</option>
+        <option value="mystery_guest">14. The High-Profile Mystery Guest Case</option>
+        <option value="strict_privacy">15. The Strict Privacy &amp; Pseudonym Case</option>
+        <option value="late_flight">16. The Late-Night / Delayed Flight Arrival Case</option>
+        <option value="honeymoon_surprise">17. The Anniversary / Honeymoon Surprise Case</option>
+        <option value="digital_key_failure">18. The Digital Key &amp; Mobile Check-In Failure Case</option>
+        <option value="third_party_booker">19. The Unannounced Third-Party Booker Case</option>
+        <option value="disability_access">20. The Physical Disability &amp; Accessibility Case</option>
+        <option value="early_departure">21. The Early Departure Intent Case</option>
+        <option value="split_billing">22. The Split-Billing / Shared Corporate Case</option>
+        <option value="room_floor_pref">23. Room Location &amp; Floor Preference Verification</option>
+        <option value="stay_rhythm">24. Stay Purpose &amp; Rhythm Diagnosis</option>
+        <option value="extended_stay">25. Extended Luxury Hotel Stay</option>
+        <option value="custom_script">-- Custom Legacy Script --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Legacy Front Desk Script (The Transactional Hazard)</label>
+      <textarea id="legacyScriptInput">"You are early. Check-in is at 3:00 PM, your room is not ready yet."</textarea>
+    </div>
+
+    <!-- Active Biometrics -->
+    <div class="form-group">
+      <label>Biometric &amp; Cognitive Telemetry</label>
+      <div class="bio-grid">
+        <div class="bio-node">
+          <span class="bio-label">Guest Vocal Pitch</span>
+          <span class="bio-value" id="bioVocal">Low (19 Hz - Receptive)</span>
+        </div>
+        <div class="bio-node">
+          <span class="bio-label">Guest Micro-Expression</span>
+          <span class="bio-value" id="bioExpression">Relaxed / Validated</span>
+        </div>
+        <div class="bio-node">
+          <span class="bio-label">Host Eye Contact</span>
+          <span class="bio-value" id="bioEye">89% Sustained (Screen-Free)</span>
+        </div>
+        <div class="bio-node">
+          <span class="bio-label">Cognitive Friction Rating</span>
+          <span class="bio-value" id="bioFriction">Zero Drag (Instant Sync)</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-main" onclick="simulateLiveInteraction()">Run Unlearn-Rethink-Relearn Engine ⚡</button>
+  </div>
+
+  <!-- Dynamic Output -->
+  <div class="card">
+    <div class="card-title">
+      <span>✨ The Unlearn-Rethink-Relearn Output</span>
+      <button class="btn-copy" onclick="copyDynamicPrompt()">Copy Dialogue</button>
+    </div>
+
+    <!-- 1. UNLEARN -->
+    <div class="output-card unlearn">
+      <div class="step-tag">1️⃣ Unlearn: Operational &amp; Asset Blindspot</div>
+      <div class="dialogue-text" id="outUnlearn">
+        Treating early arrivals as administrative obstacles and stranding fatigued guests in reception lobbies[span_0](start_span)[span_0](end_span).
+      </div>
+    </div>
+
+    <!-- 2. RETHINK -->
+    <div class="output-card rethink">
+      <div class="step-tag">2️⃣ Rethink: High-EQ Dynamic Dialogue</div>
+      <div class="dialogue-text" id="outRethink" style="font-weight: 600;">
+        "Your suite is receiving its final inspection. In the meantime, I have activated temporary key cards granting you full access to our Spa Lounge. Please enjoy a complimentary breakfast on us, and I will personally bring your permanent keys to your table the moment your room is flawless.[span_1](start_span)"[span_1](end_span)
+      </div>
+      <div class="psych-text" id="outRationale">
+        <strong>The Golden Rule:</strong> The 'Shadow Check-In[span_2](start_span)'[span_2](end_span). Tag luggage immediately, provide access to luxury amenities, set a conservative time limit, and beat it[span_3](start_span)[span_3](end_span).
+      </div>
+    </div>
+
+    <!-- 3. RELEARN -->
+    <div class="output-card relearn">
+      <div class="step-tag">3️⃣ Relearn: Cross-Department Sync &amp; Asset Security</div>
+      <div class="dialogue-text" id="outRelearn">
+        Shadow check-in workflow: Luggage is auto-routed to holding while Housekeeping task queues are reprioritized to priority rush[span_4](start_span)[span_4](end_span).
+      </div>
+      <div class="dispatch-feed" id="outDispatch">
+        [BELL DESK]: Luggage whisked and tagged for priority room delivery[span_5](start_span)[span_5](end_span).<br/>
+        [SPA/LOUNGE]: Temporary access activated; complimentary breakfast tab opened[span_6](start_span)[span_6](end_span).
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div><strong>The Modern Front Desk Simulator</strong></div>
+    <div>Dynamic Profiling • High-EQ Adaptation • Cross-Departmental Cloud Synchronization</div>
+  </footer>
+</div>
+
+<script>
+  const scenarioDatabase = {
+    early_arrival_not_ready: {
+      legacy: '"You are early. Check-in is at 3:00 PM, your room is not ready yet."',
+      unlearn: "Hiding behind rigid hotel check-in policies and stranding fatigued early arrivals in public reception areas.",
+      rethink: '"Your suite is receiving its final inspection. In the meantime, I have activated temporary key cards granting you full access to our Spa Lounge. Please enjoy a complimentary breakfast on us, and I will personally bring your permanent keys to your table the moment your room is flawless."',
+      goldenRule: "The Golden Rule: The 'Shadow Check-In'. Tag luggage immediately, provide access to luxury amenities, set a conservative time limit, and beat it.",
+      relearnSummary: "Shadow check-in workflow: Luggage is auto-routed to holding while Housekeeping task queues are reprioritized to priority rush.",
+      dispatch: "[BELL DESK]: Luggage whisked and tagged for priority room delivery.\n[SPA/LOUNGE]: Temporary access activated; complimentary breakfast tab opened.",
+      scores: { eq: "97% (Mastery)", risk: "Zero Lobby Friction", price: "Complimentary Lounge", sync: "Housekeeping Rush Flagged" }
+    },
+    transaction_payment_card: {
+      legacy: '"May I have your credit card for incidental charges and government ID, then please sign line 4?"',
+      unlearn: "Staring down at screens while demanding payment instruments, making check-in feel like an administrative interrogation.",
+      rethink: '"We have your accommodation seamlessly prepared. To ensure uninterrupted charging across the spa and dining during your stay, may I mirror your preferred card on file?"',
+      goldenRule: "The Golden Rule: Reframing financial liability into effortless luxury convenience and privilege.",
+      relearnSummary: "Frictionless card capture: Encrypted terminal mirrors pre-authorization token into the PMS without manual entry delay.",
+      dispatch: "[FRONT DESK]: Mobile key cleared instantly.\n[FINANCE]: Incidentals pre-authorized with zero verbal friction.",
+      scores: { eq: "96% (Elite)", risk: "Pre-Auth Secured", price: "100% Upfront Clarity", sync: "PMS Cashier Linked" }
+    },
+    billing_authorization: {
+      legacy: '"Your company hasn\'t sent the credit card authorization letter so you have to pay on your own card."',
+      unlearn: "Putting executive guests in the middle of corporate billing disputes upon arrival.",
+      rethink: '"We are finalizing the corporate billing routing with your travel coordinator. In the meantime, your suite is ready so you can relax without waiting; we will simply place a temporary incidental hold on your card."',
+      goldenRule: "The Golden Rule: Hold the authorization, clear the guest. Shield executive guests from corporate administrative delays.",
+      relearnSummary: "Automated billing reconciliation: Accounting dispatches a secure direct-billing link to the coordinator while releasing the room immediately.",
+      dispatch: "[FINANCE]: Direct billing link sent to corporate accounting.\n[PMS]: Master room charge separated from guest incidental folio.",
+      scores: { eq: "96% (Elite)", risk: "Corporate Revenue Protected", price: "Split Accounting Active", sync: "Finance & FO Linked" }
+    },
+    allergy_dietary: {
+      legacy: '"Please sign the registration form here and let us know if you need to update your dietary preferences."',
+      unlearn: "Assuming guests proactively disclose severe allergies on passive registration forms. Passive intake risks life-threatening incidents and legal liability.",
+      rethink: '"Mr. Vance, your safety is our priority. We have completely purged the suite of all feather bedding, replaced them with hypoallergenic linens, and notified our culinary team of your severe peanut allergy."',
+      goldenRule: "The Golden Rule: Dual-layer verification (System + Manual Room Check). Confirm safeguards are active before the guest enters the suite.",
+      relearnSummary: "Dual-layer verification protocol: Agent confirms live POS allergen locks and completes verbal kitchen synchronization for high-risk medical alerts.",
+      dispatch: "[EXECUTIVE CHEF]: Allergen flag active in POS; room service locked for cross-check.\n[HOUSEKEEPING]: Feather purge and hypoallergenic linen audit verified.",
+      scores: { eq: "98% (Flawless)", risk: "Dual-Layer Active", price: "Complimentary", sync: "Kitchen & POS Live" }
+    },
+    vip_pet: {
+      legacy: '"We see you have a dog. There is an extra pet charge and you need to sign this waiver."',
+      unlearn: "Presenting pet waivers and cleaning fees transactionally, creating immediate financial friction with pet owners.",
+      rethink: '"We are delighted to welcome Max. To ensure his comfort and safety, we just need a quick signature here on our pet guidelines, which include our 24/7 on-call veterinary contact."',
+      goldenRule: "The Golden Rule: Seamless paperwork camouflaged as a luxury welcome. Charge non-refundable deep-cleaning fee upfront to secure hotel assets.",
+      relearnSummary: "Seamless legal intake: Automatically posts upfront sanitation billing to the folio while routing customized pet setup tasks to Concierge and Housekeeping.",
+      dispatch: "[FRONT DESK]: Upfront luxury pet cleaning fee posted to cover deep sanitation.\n[CONCIERGE]: Dispatched custom Pet Welcome Kit (treats, branded tag, toy, vet card).",
+      scores: { eq: "95% (Elite)", risk: "Legal Waiver Secured", price: "100% Upfront Fee", sync: "Housekeeping & Concierge" }
+    },
+    amenity_customization: {
+      legacy: '"Welcome back. You have wine in your room, let us know if you want anything else."',
+      unlearn: "Asking open-ended preference questions at check-in instead of executing preferences pre-arrival.",
+      rethink: '"Per your request, our Sommelier has placed the 2015 Bordeaux in your climate-controlled cellar, and Housekeeping has outfitted your master bed with the firm memory-foam pillows from our wellness menu."',
+      goldenRule: "The Golden Rule: Pre-arrival execution, arrival validation. If unavailable, proactively upgrade to a higher-tier vintage with compliments.",
+      relearnSummary: "Automated profile fulfillment: Background verification of room staging with zero verbal back-and-forth at the desk.",
+      dispatch: "[SOMMELIER]: Climate cellar delivery verified.\n[HOUSEKEEPING]: Wellness menu memory-foam pillow placement confirmed.",
+      scores: { eq: "97% (Mastery)", risk: "Zero Preference Drift", price: "Fully Verified", sync: "Sommelier & FO" }
+    },
+    overbooking_upgrade: {
+      legacy: '"Your booked room is not available due to maintenance, so we have to move you."',
+      unlearn: "Exposing internal inventory errors or maintenance defects, provoking guest hostility and panic.",
+      rethink: '"To celebrate your stay, we have upgraded you to our Presidential Suite tonight." (If walked: "Due to an unexpected engineering update, we have arranged an unparalleled stay at our sister resort with upgraded tier, covered dining, and private chauffeur.")',
+      goldenRule: "The Golden Rule: 'The Bookout is a Promotion'. Frame the relocation entirely as an elevated luxury victory; hotel absorbs cost.",
+      relearnSummary: "Executive bookout orchestration: Silent management ledger re-allocation routing the expense internally while locking premium transportation.",
+      dispatch: "[DUTY MANAGER]: Presidential Suite allocation locked.\n[MARKETING/FINANCE]: Absorbed as retention expense; chauffeur dispatched.",
+      scores: { eq: "99% (Mastery)", risk: "Relationship Protected", price: "Complimentary Upgrade", sync: "GM & Chauffeur Live" }
+    },
+    invalid_card: {
+      legacy: '"Your credit card was declined. Do you have another card?"',
+      unlearn: "Using embarrassing transactional terms ('declined', 'rejected', 'no funds') in front of luxury guests.",
+      rethink: '"Mr. Sterling, it appears your banking institution has placed a standard security freeze on the card, which is quite common with high-limit international accounts. Do you happen to have an alternative card we can place on file for incidentals while you contact your private banker?"',
+      goldenRule: "The Golden Rule: Absolute discretion. Blame the bank's security protocols, never the guest, while securing asset payment immediately.",
+      relearnSummary: "Discreet credit safeguarding: PMS applies an electronic 2-hour discretionary hold while mirroring incidental pre-authorization on an alternate card.",
+      dispatch: "[ACCOUNTING]: Alternate card incidental pre-authorization secured.\n[FO DESK]: Discretionary 2-hour banking verification hold placed in PMS.",
+      scores: { eq: "96% (Elite)", risk: "Hotel Revenue Secured", price: "100% Discretionary", sync: "Finance & PMS Protected" }
+    },
+    complex_directions: {
+      legacy: '"Take elevator B to floor 3, turn left past the lounge, then elevator C to floor 5."',
+      unlearn: "Overloading fatigued guests with convoluted spatial directions and finger-pointing.",
+      rethink: '"Our property layout is unique and private. Allow me to personally escort you to your suite and introduce its features."',
+      goldenRule: "The Golden Rule: Escort over explanation. Conduct a 2-minute in-room tech orientation for drapes, lighting, and elevator bypasses.",
+      relearnSummary: "White-glove escort deployment: Butler dispatch system assigns in-person escort and coordinates in-room smart automation walkthrough.",
+      dispatch: "[GUEST BUTLER]: Personal in-suite escort and tech orientation deployed.\n[LOBBY HOST]: Relieved station for white-glove transit escort.",
+      scores: { eq: "98% (Flawless)", risk: "Spatial Anxiety Removed", price: "Standard Luxury Service", sync: "Butler & Front Office" }
+    },
+    parking_valet: {
+      legacy: '"Parking is $65 a night in the garage."',
+      unlearn: "Failing to disclose parking fees upfront, causing billing disputes and damage claim vulnerabilities.",
+      rethink: '"For your convenience, our secure, climate-controlled overnight valet and Tesla supercharging service is $65 nightly, which we will seamlessly apply to your room bill. Whenever you require your vehicle, simply press the \'Valet\' button on your in-room phone 15 minutes prior."',
+      goldenRule: "The Golden Rule: Zero financial surprises. Position valet as elite convenience and inspect vehicle via HD cameras to protect hotel assets.",
+      relearnSummary: "Digital asset logging: Automated camera scans record exterior vehicle condition while posting clear daily valet billing to the master folio.",
+      dispatch: "[VALET LOGISTICS]: HD camera digital condition inspection recorded to prevent false claims.\n[BILLING]: Transparent $65/night line item applied to master room bill.",
+      scores: { eq: "94% (Exceptional)", risk: "Asset Damage Shielded", price: "100% Upfront Clarity", sync: "Valet & Accounting Synced" }
+    },
+    ancillary_upsell: {
+      legacy: '"Would you like to book a massage or dinner tonight?"',
+      unlearn: "Aggressive, transactional sales pitches during registration that ignore travel fatigue.",
+      rethink: '"I noticed you have a packed itinerary tomorrow. Our spa has a rare opening for our signature hot-stone massage at 5:00 PM right after your meetings, and I can secure prime seating at our Michelin-starred terrace for 8:00 PM. Shall I lock those reservations in for you now to guarantee availability?"',
+      goldenRule: "The Golden Rule: High-touch preference mapping. Use conversational cues to curate wellness and capture internal ancillary revenue.",
+      relearnSummary: "Seamless itinerary locking: Front desk syncs directly with Spa and F&B reservation engines without switching software interfaces.",
+      dispatch: "[SPA CONCIERGE]: 5:00 PM Hot-Stone slot placed on hold.\n[TERRACE RESTAURANT]: 8:00 PM VIP table reserved.",
+      scores: { eq: "95% (Elite)", risk: "Zero High-Pressure Sales", price: "Dynamic Revenue Capture", sync: "Spa, F&B & Front Desk" }
+    },
+    angry_guest: {
+      legacy: '"You need to calm down, that is our hotel policy."',
+      unlearn: "Arguing hotel rules in public lobby spaces and escalating guest hostility.",
+      rethink: '"Mr. Rossi, your experience is incredibly important to me. Let\'s step into our private library lounge where we can resolve this immediately over an espresso."',
+      goldenRule: "The Golden Rule: 'LAST' Method (Listen, Apologize, Solve, Thank) + Isolation. Saving the long-term relationship outweighs minor short-term fee waivers.",
+      relearnSummary: "Executive recovery dispatch: Silent alert signals Duty Management to the private lounge with pre-authorized compensation allowances.",
+      dispatch: "[DUTY MANAGER]: Private lounge resolution; authorized fee waiver / airport transfer.\n[SECURITY]: Standby alert without public escalation.",
+      scores: { eq: "99% (Mastery)", risk: "Brand Reputation Shielded", price: "Discretionary Waiver", sync: "Executive Leadership" }
+    },
+    multigen_family: {
+      legacy: '"Here are the keys for all rooms on floors 2, 4, and 5."',
+      unlearn: "Separating families across distant corridors and neglecting child safety or grandparent logistics.",
+      rethink: '"We have confirmed your connecting suites on Floor 3. Housekeeping has already installed the requested cribs, bottle warmers, and childproof outlet covers. I have also pre-booked the children into our Kids\' Club for tomorrow afternoon so you can enjoy a quiet lunch."',
+      goldenRule: "The Golden Rule: Pre-assigned adjoining rooms and staggered experiences. Engage children at arrival while checking in adults seamlessly.",
+      relearnSummary: "Integrated family synchronization: Automated room grouping verification combined with pre-arrival Kids Club and housekeeping amenity setup.",
+      dispatch: "[HOUSEKEEPING]: Childproof covers, cribs, and bottle warmers audited.\n[KIDS CLUB]: Afternoon session pre-registered for children.",
+      scores: { eq: "96% (Elite)", risk: "Child Safety Verified", price: "Complimentary Package", sync: "Housekeeping & Concierge" }
+    },
+    mystery_guest: {
+      legacy: '"Standard check-in performed by checklist."',
+      unlearn: "Treating luxury check-in casually with shortcuts, posture breaks, or skipping brand standards.",
+      rethink: '"Welcome, Mr. Sterling. It is an absolute pleasure to host you. Allow me to offer you our chilled botanical refreshment while we seamlessly review your arrival details."',
+      goldenRule: "The Golden Rule: Absolute adherence to standard operational manuals. Name used 3+ times, erect posture, pristine uniform, beverage offered in 2 min.",
+      relearnSummary: "Operational benchmark logging: Quality assurance metrics track 15 core service standards silently across the arrival interaction.",
+      dispatch: "[QUALITY AUDIT HUB]: 15 core brand luxury standards logged and executed.\n[MANAGEMENT]: Flawless audit score logged in performance engine.",
+      scores: { eq: "100% (Perfection)", risk: "Audit Failure Shielded", price: "100% Accurate", sync: "All Operations Synced" }
+    },
+    strict_privacy: {
+      legacy: '"I need your real ID name to put your room on the front desk system."',
+      unlearn: "Saying celebrity or VIP pseudonyms aloud or leaving high-profile room numbers visible in PMS.",
+      rethink: '"We have successfully locked your registration under your chosen pseudonym. To anyone calling or visiting the hotel, your presence here does not exist. Only staff with Level-5 clearance can view your room assignment."',
+      goldenRule: "The Golden Rule: 'Alias Lock' in the Property Management System. Passport verified legally, profile masked publicly; leaking data leads to termination.",
+      relearnSummary: "Encrypted privacy lockdown: Legal identity is tokenized and sealed in the PMS; public-facing interfaces display only approved alias tags.",
+      dispatch: "[SECURITY & IT]: Level-5 clearance lock engaged on PMS terminal.\n[OPERATIONS]: Verbal room number ban strictly enforced across all staff.",
+      scores: { eq: "98% (Flawless)", risk: "Privacy Breach Shielded", price: "VIP Protocol Active", sync: "Security & GM Level-5" }
+    },
+    late_flight: {
+      legacy: '"Sign all registration forms and listen to the breakfast times."',
+      unlearn: "Forcing exhausting, lengthy registration scripts on guests arriving at 3:00 AM after delayed flights.",
+      rethink: '"Welcome, Ms. Thorne. We know you\'ve had a long journey. I have pre-processed everything. Here are your keys; your luggage is coming up right behind you. We can handle any additional details over the phone tomorrow afternoon. Rest well."',
+      goldenRule: "The Golden Rule: The '60-Second Check-In'. Pre-authorize credit card and pre-cut keys at midnight; bypass standard script completely.",
+      relearnSummary: "Rapid overnight transit: Midnight pre-authorization and pre-cut key issuance trigger automated room access and silent luggage delivery.",
+      dispatch: "[NIGHT AUDIT]: Folio pre-authorized; keys pre-cut in leather pouch.\n[BELL STAFF]: Immediate silent luggage transit dispatched.",
+      scores: { eq: "99% (Mastery)", risk: "Fatigue De-escalated", price: "Pre-Authorized", sync: "Night Audit & Bell Staff" }
+    },
+    honeymoon_surprise: {
+      legacy: '"Your husband ordered the romance package with champagne and flowers in the room."',
+      unlearn: "Verbally reading surprise packages in front of both partners at the desk, ruining the surprise.",
+      rethink: '"Everything for your celebration has been meticulously arranged exactly as we discussed via email. Your special welcome amenity will arrive 15 minutes after you enter the room."',
+      goldenRule: "The Golden Rule: Code words and discreet billing confirmations. Hand hidden itinerary card strictly to the organizer.",
+      relearnSummary: "Automated timed dispatch: In-Room Dining delivery is synchronized to a 15-minute post-check-in timer with suppressed shared folio visibility.",
+      dispatch: "[ROOM SERVICE]: Romance package timed for 15 minutes post-entry.\n[FRONT OFFICE]: Folio charges suppressed from shared check-in view.",
+      scores: { eq: "97% (Mastery)", risk: "Surprise Intact", price: "Discreet Folio Routing", sync: "In-Room Dining Live" }
+    },
+    digital_key_failure: {
+      legacy: '"The app fails a lot. You have to come down to the desk to get plastic keys."',
+      unlearn: "Making guests walk back down to the lobby when property digital door locks malfunction.",
+      rethink: '"I am so sorry for the technological inconvenience. Please allow me to hand-deliver your physical access cards directly to your suite door so you can relax immediately."',
+      goldenRule: "The Golden Rule: Rapid deployment of physical backup with a luxury apology. Dispatch runner/security to door with mobile tablet to verify ID on spot.",
+      relearnSummary: "Mobile doorstep resolution: Security/runner is automatically dispatched to the guest room with a handheld tablet and pre-cut physical RFID keys.",
+      dispatch: "[SECURITY / RUNNER]: Doorstep ID verification and physical key handoff.\n[IT SUPPORT]: Digital lock key reset ticket logged.",
+      scores: { eq: "95% (Elite)", risk: "Physical ID Verified", price: "Zero Extra Fee", sync: "Runner & Security Live" }
+    },
+    third_party_booker: {
+      legacy: '"Your travel agency hasn\'t paid us, so you cannot check in without paying."',
+      unlearn: "Blocking high-status guests at reception due to pending corporate or agency billing vouchers.",
+      rethink: '"We will hold your room on a temporary incidentals hold while our corporate desk coordinates the formal billing link directly with your agency in the next hour. Rest assured, your stay is fully secured."',
+      goldenRule: "The Golden Rule: Hold the authorization, clear the guest. Take personal card for incidentals only; send secure digital payment link (Sertifi) to agency.",
+      relearnSummary: "Automated third-party payment routing: Generates a secure electronic billing link (Sertifi) to the booker while securing incidental pre-auth.",
+      dispatch: "[CORPORATE FINANCE]: Secure billing link dispatched to travel agency.\n[PMS]: Master room charge routed to agency; incidentals to guest card.",
+      scores: { eq: "96% (Elite)", risk: "Revenue Fully Protected", price: "Transparent Dual Routing", sync: "Finance & Agent Linked" }
+    },
+    disability_access: {
+      legacy: '"You are in our handicapped room near the elevator."',
+      unlearn: "Using clinical, patronizing language when assigning accessible luxury suites.",
+      rethink: '"We have configured your suite with lowered closet racks, an open roll-in shower with premium seating, and emergency assistance pull-cords directly connected to our 24/7 medical response team. How may we adjust this space further to make it completely perfect for you?"',
+      goldenRule: "The Golden Rule: Tactful, empowering spatial familiarization. Discreetly highlight high-utility safety and comfort features.",
+      relearnSummary: "Silent accessibility alignment: Cross-checks emergency pull-cord connectivity and updates medical response routing without public fanfare.",
+      dispatch: "[HOUSEKEEPING]: Roll-in clearance and emergency pull-cords tested.\n[MEDICAL RESPONSE]: In-room accessibility monitor flagged active.",
+      scores: { eq: "98% (Flawless)", risk: "Life Safety & Medical Synced", price: "Standard Luxury Rate", sync: "Medical Team & FO" }
+    },
+    early_departure: {
+      legacy: '"You have to pay an early departure penalty fee if you leave today."',
+      unlearn: "Threatening departing guests with penalty fees during unexpected personal or executive schedule changes.",
+      rethink: '"We are so sorry to hear you have to cut your stay short. Let me check the package terms. Because this was booked under an exclusive minimum-stay rate, a standard early departure fee applies. However, let me coordinate with our Front Office Manager to see if we can convert those remaining nights into a resort credit for your next visit, ensuring you don\'t lose the value."',
+      goldenRule: "The Golden Rule: Soft empathy backed by firm, systemized policy waivers. Protect hotel revenue while converting penalties into future resort credits.",
+      relearnSummary: "Revenue credit conversion: The system converts penalty nights into non-expiring future resort credits, protecting revenue and loyalty.",
+      dispatch: "[REVENUE MANAGEMENT]: Remaining nights converted to future resort credit voucher.\n[CONCIERGE]: Early airport departure transfer arranged.",
+      scores: { eq: "94% (Exceptional)", risk: "Contract Terms Enforced", price: "Credit Conversion Active", sync: "Revenue & Front Office" }
+    },
+    split_billing: {
+      legacy: '"Splitting corporate folios at the desk takes too long and confuses accounting."',
+      unlearn: "Complaining about complex billing or allowing corporate charges to mix with personal incidentals.",
+      rethink: '"To ensure your corporate expenses are perfectly organized, I have routed the villa master rate and corporate dining strictly to Folio A under the company card. All individual spa treatments and personal incidentals will separate automatically onto Folio B on your personal card. Here is a test printout to confirm it matches your company\'s accounting standards."',
+      goldenRule: "The Golden Rule: Clean geometric routing in the PMS window. Set up Folio A and Folio B pre-arrival and review test printout live.",
+      relearnSummary: "Geometric folio architecture: Pre-arrival automated splitting routes room rates to corporate accounts and incidentals to personal accounts.",
+      dispatch: "[PMS BILLING]: Folio A (Corporate Card) / Folio B (Personal Card) split confirmed.\n[ACCOUNTING]: Expense report pre-cleared for checkout.",
+      scores: { eq: "97% (Mastery)", risk: "Chargebacks Prevented", price: "Geometric Folio Split", sync: "Finance & Cashier" }
+    },
+    room_floor_pref: {
+      legacy: '"Your room is on the 4th floor near the elevators."',
+      unlearn: "Assigning rooms mechanically without verifying whether historical preferences still match current journey requirements[span_7](start_span)[span_7](end_span).",
+      rethink: '"I see you previously preferred a higher floor away from elevators—is that still ideal for this stay, or can we tailor anything new for you tonight?[span_8](start_span)"[span_8](end_span)',
+      goldenRule: "The Golden Rule: Live preference checkpoint[span_9](start_span)[span_9](end_span). Validates historical detail while empowering live adjustments[span_10](start_span)[span_10](end_span).",
+      relearnSummary: "Dynamic floor routing: Real-time room inventory swap updates baggage dispatch without delaying the guest[span_11](start_span)[span_11](end_span).",
+      dispatch: "[FRONT OFFICE]: Room allocation verified and validated live[span_12](start_span)[span_12](end_span).\n[BELL DESK]: Express delivery routed to verified room.",
+      scores: { eq: "96% (Elite)", risk: "Zero Room Discontent", price: "Complimentary Alignment", sync: "FO & Luggage Synced" }
+    },
+    stay_rhythm: {
+      legacy: '"Are you here for business or pleasure?"',
+      unlearn: "Using generic binary checklist questions that yield flat, unusable operational data.",
+      rethink: '"Are you here to completely disconnect and unwind, or do you require a seamless productive setup between meetings?[span_13](start_span)"[span_13](end_span)',
+      goldenRule: "The Golden Rule: Emotional & velocity diagnosis[span_14](start_span)[span_14](end_span). Instantly clues operations into whether the guest seeks tranquility or speed[span_15](start_span)[span_15](end_span).",
+      relearnSummary: "Rhythm profiling broadcast: Tags housekeeping schedules for Do-Not-Disturb sanctuary or express morning service[span_16](start_span)[span_16](end_span).",
+      dispatch: "[HOUSEKEEPING]: Quiet zone routing or express cleaning window assigned.\n[CONCIERGE]: Business adapter or wellness packet staged[span_17](start_span)[span_17](end_span).",
+      scores: { eq: "98% (Flawless)", risk: "Zero Service Friction", price: "Standard Rate", sync: "Housekeeping & Concierge[span_18](start_span)[span_18](end_span)" }
+    },
+    extended_stay: {
+      legacy: '"If you want to extend your stay you have to check availability and rate at the desk."',
+      unlearn: "Treating extended stay requests as administrative booking obstacles.",
+      rethink: '"We would be delighted to extend your time with us. I will personally lock in your current suite so you do not need to move, and update your keycard seamlessly."',
+      goldenRule: "The Golden Rule: Frictionless continuity. Protect residential comfort and eliminate room-move anxiety.",
+      relearnSummary: "Extended inventory lock: PMS extends reservation dates automatically without altering key encryption codes.",
+      dispatch: "[RESERVATIONS]: Folio extended without room category alteration.\n[HOUSEKEEPING]: Long-stay linen cycle scheduled.",
+      scores: { eq: "95% (Elite)", risk: "Revenue Maximized", price: "Locked Master Rate", sync: "Reservations & Housekeeping" }
+    }
+  };
+
+  function runEngine() {
+    const scenarioKey = document.getElementById("scenarioSelect").value;
+    const guestTier = document.getElementById("guestTier").value;
+    const legacyInput = document.getElementById("legacyScriptInput");
+
+    if (scenarioKey !== "custom_script" && scenarioDatabase[scenarioKey]) {
+      const data = scenarioDatabase[scenarioKey];
+      legacyInput.value = data.legacy;
+      document.getElementById("outUnlearn").textContent = data.unlearn;
+      document.getElementById("outRethink").textContent = data.rethink;
+      document.getElementById("outRationale").innerHTML = `<strong>${data.goldenRule}</strong>`;
+      document.getElementById("outRelearn").textContent = data.relearnSummary;
+      document.getElementById("outDispatch").innerHTML = data.dispatch.replace(/\n/g, "<br/>");
+      
+      document.getElementById("scoreEq").textContent = data.scores.eq;
+      document.getElementById("scoreRisk").textContent = data.scores.risk;
+      document.getElementById("scorePrice").textContent = data.scores.price;
+      document.getElementById("scoreSync").textContent = data.scores.sync;
+    } else {
+      const customText = legacyInput.value;
+      document.getElementById("outUnlearn").textContent = 
+        `Unlearn rigid transactional scripts ("${customText.slice(0, 40)}..."). Check-in must never feel like an administrative burden[span_19](start_span)[span_19](end_span).`;
+      document.getElementById("outRethink").textContent = 
+        `"To ensure every aspect of your stay is tailored: I'm updating your profile right now so our entire team is aligned. What is one small detail we can perfect for you tonight?[span_20](start_span)"[span_20](end_span)`;
+      document.getElementById("outRationale").innerHTML = 
+        `<strong>High-EQ Strategy:</strong> Dynamically tailored for ${guestTier.replace(/_/g, ' ').toUpperCase()} rhythm while safeguarding hotel assets[span_21](start_span)[span_21](end_span)[span_22](start_span)[span_22](end_span).`;
+      document.getElementById("outRelearn").textContent = 
+        "Frictionless backend synchronization: Dynamic tags broadcast directly across Housekeeping and F&B operational queues[span_23](start_span)[span_23](end_span).";
+      document.getElementById("outDispatch").innerHTML = 
+        `[ALL-DEPT SYNC]: Captured intelligence broadcast live to Housekeeping & F&B[span_24](start_span)[span_24](end_span).<br/>[FINANCE]: Incidentals secured in PMS[span_25](start_span)[span_25](end_span).`;
+      
+      document.getElementById("scoreEq").textContent = "92% (High EQ)[span_26](start_span)[span_26](end_span)";
+      document.getElementById("scoreRisk").textContent = "Standard Safeguard[span_27](start_span)[span_27](end_span)";
+      document.getElementById("scorePrice").textContent = "100% Upfront[span_28](start_span)[span_28](end_span)";
+      document.getElementById("scoreSync").textContent = "Active[span_29](start_span)[span_29](end_span)";
+    }
+  }
+
+  function simulateLiveInteraction() {
+    const vocalList = ["Low (18 Hz - Relaxed)", "Moderate (32 Hz - Travel Fatigue)", "Elevated (42 Hz - Executive Velocity)"];
+    const expList = ["Receptive / Warm Smile", "Attentive / Focused", "Calm / Appreciative"];
+    
+    document.getElementById("bioVocal").textContent = vocalList[Math.floor(Math.random() * vocalList.length)];
+    document.getElementById("bioExpression").textContent = expList[Math.floor(Math.random() * expList.length)];
+    document.getElementById("bioEye").textContent = `${Math.floor(88 + Math.random() * 8)}% Sustained (Screen-Free)[span_30](start_span)[span_30](end_span)`;
+    
+    runEngine();
+  }
+
+  function copyDynamicPrompt() {
+    const text = document.getElementById("outRethink").textContent;
+    navigator.clipboard.writeText(text);
+    alert("Dynamic Dialogue copied to clipboard!");
+  }
+
+  runEngine();
+</script>
+
+</body>
+</html>
